@@ -23,9 +23,6 @@ const generateConfig = ({extensionPath, devMode=false, customOutputPath, analyze
     "react",
     "react-hot-loader",
     "react-dom:@hot-loader/react-dom",
-    "regenerator-runtime",
-    "core-js",
-    "styled-components"
   ];
 
   // Actively searches for the "good" root starting from auspice dir and going backwards

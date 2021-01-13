@@ -49,6 +49,7 @@
     "@babel/preset-env": "^7.9.6",
     "@babel/preset-react": "^7.0.0",
     "@hot-loader/react-dom": "^16.13.0",
+    "@jbrowse/react-linear-genome-view": "^1.0.3",
     "argparse": "^1.0.10",
     "babel-loader": "^8.0.4",
     "babel-plugin-lodash": "^3.3.4",
