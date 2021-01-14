@@ -76,6 +76,7 @@ staging_files=(
   "flu_seasonal_yam_na_3y.json" "flu_seasonal_yam_na_3y_tip-frequencies.json" "flu_seasonal_yam_na_3y_root-sequence.json" \
   "flu_seasonal_yam_na_6y.json" "flu_seasonal_yam_na_6y_tip-frequencies.json" "flu_seasonal_yam_na_6y_root-sequence.json" \
   "flu_seasonal_yam_na_12y.json" "flu_seasonal_yam_na_12y_tip-frequencies.json" "flu_seasonal_yam_na_12y_root-sequence.json" \
+  "ncov_global_tip-frequencies.json" "ncov_global_root-sequence.json"
 )
 
 for i in "${staging_files[@]}"
