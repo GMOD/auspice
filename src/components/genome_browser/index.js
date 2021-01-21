@@ -41,72 +41,7 @@ Wiggle track of entropy
 
 // Question is whether we want to replace diversity panel or just add browser
 
-
-// get from parent
-import * as data from "./data/ncov_global_root-sequence.json";
-
-// This is the hard-coded Sars-Cov2 assembly
-
-// const assembly = {
-//   name: "Sars-Cov2",
-//   sequence: {
-//     type: "ReferenceSequenceTrack",
-//     trackId: "Sars-Cov2-ReferenceSequenceTrack",
-//     adapter: {
-//       type: "BgzipFastaAdapter",
-//       fastaLocation: {
-//         uri: "https://jbrowse.org/genomes/sars-cov2/fasta/sars-cov2.fa.gz",
-//       },
-//       faiLocation: {
-//         uri: "https://jbrowse.org/genomes/sars-cov2/fasta/sars-cov2.fa.gz.fai",
-//       },
-//       gziLocation: {
-//         uri: "https://jbrowse.org/genomes/sars-cov2/fasta/sars-cov2.fa.gz.gzi",
-//       },
-//     },
-//   },
-// };
-
-const assembly = {
-  name: "Sars-Cov2",
-  sequence: {
-    type: "ReferenceSequenceTrack",
-    trackId: "Sars-Cov2-ReferenceSequenceTrack",
-    adapter: {
-      type: "FromConfigSequenceAdapter",
-      features: [
-        {
-          refName: "Sars-Cov2",
-          uniqueId: "Sars-Cov2",
-          start: 0,
-          end: data.nuc.length,
-          seq: data.nuc,
-        },
-      ],
-    },
-  },
-};
-
-const tracks = [
-  {
-    type: "FeatureTrack",
-    name: "Sars-Cov2 Annotations",
-    trackId: "sars-cov2-annotations",
-    assemblyNames: ["Sars-Cov2"],
-    category: ["Annotation"],
-    adapter: {
-      type: "Gff3TabixAdapter",
-      gffGzLocation: {
-        uri: "https://jbrowse.org/genomes/sars-cov2/sars-cov2-annotations.sorted.gff.gz",
-      },
-      index: {
-        location: {
-          uri: "https://jbrowse.org/genomes/sars-cov2/sars-cov2-annotations.sorted.gff.gz.tbi",
-        },
-      },
-    },
-  },
-];
+// ---------------------------------------------------------------------
 
 const defaultSession = {
   name: "My session",
@@ -131,17 +66,89 @@ const defaultSession = {
 class GenomeView extends React.Component {
   render() {
     console.log(this.props);
+    console.log("Now using metadata");
 
     // add assembly from metadata
+    const assembly = {
+      name: "Sars-Cov2",
+      sequence: {
+        type: "ReferenceSequenceTrack",
+        trackId: "Sars-Cov2-ReferenceSequenceTrack",
+        adapter: {
+          type: "FromConfigSequenceAdapter",
+          features: [
+            {
+              refName: "Sars-Cov2",
+              uniqueId: "Sars-Cov2",
+              start: 0,
+              end: this.props.metadata.rootSequence.nuc.length,
+              seq: this.props.metadata.rootSequence.nuc,
+            },
+          ],
+        },
+      },
+    };
 
     // add tracks from annotations
+    const processedAnnotations = this.props.annotations.map((annotation) => {
+      return {
+        refName: "Sars-Cov2",
+        name: annotation.prot,
+        uniqueId: annotation.idx,
+        start: annotation.start,
+        end: annotation.end,
+        fill: annotation.fill,
+      };
+    });
 
+    const tracks = [
+      {
+        type: "FeatureTrack",
+        name: "Sars-Cov2 Annotations",
+        trackId: "sars-cov2-annotations",
+        assemblyNames: ["Sars-Cov2"],
+        category: ["Annotation"],
+        adapter: {
+          type: "Gff3TabixAdapter",
+          gffGzLocation: {
+            uri: "https://jbrowse.org/genomes/sars-cov2/sars-cov2-annotations.sorted.gff.gz",
+          },
+          index: {
+            location: {
+              uri: "https://jbrowse.org/genomes/sars-cov2/sars-cov2-annotations.sorted.gff.gz.tbi",
+            },
+          },
+        },
+      },
+      {
+        type: "FeatureTrack",
+        name: "Nextstrain annotations",
+        trackId: "nextstrain-annotations",
+        assemblyNames: ["Sars-Cov2"],
+        category: ["Annotation"],
+        adapter: {
+          type: "FromConfigAdapter",
+          features: processedAnnotations
+        },
+        displays: [
+          {
+            type: "LinearBasicDisplay",
+            displayId: "nextstrain-color-display",
+            renderer: {
+              type: "SvgFeatureRenderer",
+              color1: "function(feature) { return feature.get('fill') || 'black' }"
+            }
+          }
+        ]
+      }
+    ];
+    
     // move default session here and set it up
 
     const viewState = createViewState({
       assembly,
       tracks,
-      location: "1:1000",
+      location: "Sars-Cov2:493..29,903",
       defaultSession,
     });
 
