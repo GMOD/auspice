@@ -13,11 +13,11 @@ const theme = createJBrowseTheme();
 // Data Views
 
 /* 
-Load the assembly from metadata
+Load the assembly from metadata ✅
 */
 
 /* 
-Load the gene track from JSON (from entropyCreateStateFromJsons)
+Load the gene track from JSON ✅
 
 We want to load the gene array into a FeatureTrack (can FeatureTrack display be configured?)
 */
@@ -43,30 +43,15 @@ Wiggle track of entropy
 
 // ---------------------------------------------------------------------
 
-const defaultSession = {
-  name: "My session",
-  view: {
-    id: "linearGenomeView",
-    type: "LinearGenomeView",
-    tracks: [
-      {
-        type: "ReferenceSequenceTrack",
-        configuration: "Sars-Cov2-ReferenceSequenceTrack",
-        displays: [
-          {
-            type: "LinearReferenceSequenceDisplay",
-            configuration: "Sars-Cov2-ReferenceSequenceTrack-LinearReferenceSequenceDisplay",
-          },
-        ],
-      },
-    ],
-  },
-};
-
 class GenomeView extends React.Component {
   render() {
     console.log(this.props);
     console.log("Now using metadata");
+
+    // avoid error with rootSequence (should add spinner for loading maybe)
+    if (this.props.metadata.rootSequence == undefined) {
+      return <></>;
+    }
 
     // add assembly from metadata
     const assembly = {
@@ -128,7 +113,7 @@ class GenomeView extends React.Component {
         category: ["Annotation"],
         adapter: {
           type: "FromConfigAdapter",
-          features: processedAnnotations
+          features: processedAnnotations,
         },
         displays: [
           {
@@ -136,19 +121,48 @@ class GenomeView extends React.Component {
             displayId: "nextstrain-color-display",
             renderer: {
               type: "SvgFeatureRenderer",
-              color1: "function(feature) { return feature.get('fill') || 'black' }"
-            }
-          }
-        ]
-      }
+              color1: "function(feature) { return feature.get('fill') || 'black' }",
+            },
+          },
+        ],
+      },
     ];
-    
+
     // move default session here and set it up
+    const defaultSession = {
+      name: "My session",
+      view: {
+        id: "linearGenomeView",
+        type: "LinearGenomeView",
+        tracks: [
+          {
+            type: "ReferenceSequenceTrack",
+            configuration: "Sars-Cov2-ReferenceSequenceTrack",
+            displays: [
+              {
+                type: "LinearReferenceSequenceDisplay",
+                configuration: "Sars-Cov2-ReferenceSequenceTrack-LinearReferenceSequenceDisplay",
+              },
+            ],
+          },
+          {
+            type: "FeatureTrack",
+            configuration: "nextstrain-annotations",
+            displays: [
+              {
+                type: "LinearBasicDisplay",
+                configuration: "nextstrain-color-display",
+              },
+            ],
+          },
+        ],
+      },
+    };
 
     const viewState = createViewState({
       assembly,
       tracks,
-      location: "Sars-Cov2:493..29,903",
+      location: "Sars-Cov2:1..29,903",
       defaultSession,
     });
 
