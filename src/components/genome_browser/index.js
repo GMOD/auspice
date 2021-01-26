@@ -89,7 +89,7 @@ class GenomeView extends React.Component {
     const processedEntropy = this.props.bars.map((bar) => {
       return {
         refName: "Sars-Cov2",
-        score: Number(bar.y) * 1000,
+        score: Number(bar.y),
         start: bar.x,
         end: bar.x + 1,
         uniqueId: String(bar.x),
