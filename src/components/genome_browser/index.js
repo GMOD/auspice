@@ -23,7 +23,7 @@ We want to load the gene array into a FeatureTrack (can FeatureTrack display be 
 */
 
 /* 
-Wiggle track of entropy
+Wiggle track of entropy ✅
 
 1. We want the same entropy data as entropy panel (probably inline from entropy)
 2. Process the entropy array
@@ -33,8 +33,8 @@ Wiggle track of entropy
 // Future JB2 Work
 
 /* 
-1. Floating track labels
-2. Ability to upload tracks into embedded LGV
+1. Floating track labels (mentioned in issue)
+2. Ability to upload tracks into embedded LGV (opened issue)
 3. Theming
 4. Weird width (CSS?) interactions
 */
