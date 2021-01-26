@@ -45,8 +45,8 @@ Wiggle track of entropy
 
 class GenomeView extends React.Component {
   render() {
+    console.log("Props including connected state:");
     console.log(this.props);
-    console.log("Now using metadata");
 
     // avoid error with rootSequence (should add spinner for loading maybe)
     if (this.props.metadata.rootSequence == undefined) {
@@ -83,6 +83,16 @@ class GenomeView extends React.Component {
         start: annotation.start,
         end: annotation.end,
         fill: annotation.fill,
+      };
+    });
+
+    const processedEntropy = this.props.bars.map((bar) => {
+      return {
+        refName: "Sars-Cov2",
+        score: Number(bar.y) * 1000,
+        start: bar.x,
+        end: bar.x + 1,
+        uniqueId: String(bar.x),
       };
     });
 
@@ -125,6 +135,16 @@ class GenomeView extends React.Component {
             },
           },
         ],
+      },
+      {
+        type: "QuantitativeTrack",
+        name: "Entropy score",
+        trackId: "entropy-score",
+        assemblyNames: ["Sars-Cov2"],
+        adapter: {
+          type: "FromConfigAdapter",
+          features: processedEntropy,
+        },
       },
     ];
 
@@ -179,6 +199,7 @@ function mapStateToProps(state) {
   return {
     annotations: state.entropy.annotations,
     geneMap: state.entropy.geneMap,
+    bars: state.entropy.bars,
     geneLength: state.controls.geneLength,
     metadata: state.metadata,
   };
