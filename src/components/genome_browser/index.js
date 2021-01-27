@@ -1,12 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
-// import Card from "../framework/card";
+import Card from "../framework/card";
 import {
   createViewState,
   createJBrowseTheme,
   JBrowseLinearGenomeView,
   ThemeProvider,
 } from "@jbrowse/react-linear-genome-view";
+import { width } from "../../util/globals";
 
 const theme = createJBrowseTheme();
 
@@ -187,10 +188,13 @@ class GenomeView extends React.Component {
     });
 
     return (
-      // Ultimately I will want to wrap this in a Card for consistency
-      <ThemeProvider theme={theme}>
-        <JBrowseLinearGenomeView viewState={viewState} />
-      </ThemeProvider>
+      <Card title="Genome Browser">
+        <div style={{ width: this.props.width }}>
+          <ThemeProvider theme={theme}>
+            <JBrowseLinearGenomeView viewState={viewState} />
+          </ThemeProvider>
+        </div>
+      </Card>
     );
   }
 }
