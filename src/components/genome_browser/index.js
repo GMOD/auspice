@@ -9,7 +9,16 @@ import {
 } from "@jbrowse/react-linear-genome-view";
 import { width } from "../../util/globals";
 
-const theme = createJBrowseTheme();
+const theme = createJBrowseTheme({
+  palette: {
+    primary: {
+      main: "#5da8a3",
+    },
+    secondary: {
+      main: "#333",
+    },
+  },
+});
 
 // Data Views
 
@@ -46,8 +55,8 @@ Wiggle track of entropy ✅
 
 class GenomeView extends React.Component {
   render() {
-    console.log("Props including connected state:");
-    console.log(this.props);
+    // console.log("Props including connected state:");
+    // console.log(this.props);
 
     // avoid error with rootSequence (should add spinner for loading maybe)
     if (this.props.metadata.rootSequence == undefined) {
@@ -142,6 +151,7 @@ class GenomeView extends React.Component {
         name: "Entropy score",
         trackId: "entropy-score",
         assemblyNames: ["Sars-Cov2"],
+        category: ["Annotation"],
         adapter: {
           type: "FromConfigAdapter",
           features: processedEntropy,
@@ -155,14 +165,21 @@ class GenomeView extends React.Component {
       view: {
         id: "linearGenomeView",
         type: "LinearGenomeView",
+        offsetPx: 0,
+        bpPerPx: 29,
         tracks: [
           {
-            type: "ReferenceSequenceTrack",
-            configuration: "Sars-Cov2-ReferenceSequenceTrack",
+            type: "QuantitativeTrack",
+            configuration: "entropy-score",
             displays: [
               {
-                type: "LinearReferenceSequenceDisplay",
-                configuration: "Sars-Cov2-ReferenceSequenceTrack-LinearReferenceSequenceDisplay",
+                type: "LinearWiggleDisplay",
+                displayId: "entropy-score-LinearWiggleDisplay",
+                renderers: {
+                  DensityRenderer: { type: "DensityRenderer" },
+                  XYPlotRenderer: { type: "XYPlotRenderer" },
+                  LinePlotRenderer: { type: "LinePlotRenderer" },
+                },
               },
             ],
           },
@@ -176,6 +193,16 @@ class GenomeView extends React.Component {
               },
             ],
           },
+          {
+            type: "ReferenceSequenceTrack",
+            configuration: "Sars-Cov2-ReferenceSequenceTrack",
+            displays: [
+              {
+                type: "LinearReferenceSequenceDisplay",
+                configuration: "Sars-Cov2-ReferenceSequenceTrack-LinearReferenceSequenceDisplay",
+              },
+            ],
+          },
         ],
       },
     };
@@ -186,6 +213,9 @@ class GenomeView extends React.Component {
       location: "Sars-Cov2:1..29,903",
       defaultSession,
     });
+
+    // console.log("Active tracks:");
+    // console.log(JSON.stringify(viewState.session.tracks));
 
     return (
       <Card title="Genome Browser">
