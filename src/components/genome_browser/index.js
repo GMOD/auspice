@@ -165,8 +165,8 @@ class GenomeView extends React.Component {
       view: {
         id: "linearGenomeView",
         type: "LinearGenomeView",
-        offsetPx: 0,
-        bpPerPx: 29,
+        // offsetPx: 0,
+        // bpPerPx: 29,
         tracks: [
           {
             type: "QuantitativeTrack",
@@ -207,15 +207,20 @@ class GenomeView extends React.Component {
       },
     };
 
+    const location = this.props.zoomMin
+      ? `Sars-Cov2:${this.props.zoomMin}..${this.props.zoomMax}`
+      : "Sars-Cov2:1..29,903";
+
+    console.log({ location });
+
     const viewState = createViewState({
       assembly,
       tracks,
-      location: "Sars-Cov2:1..29,903",
+      location,
       defaultSession,
     });
 
-    // console.log("Active tracks:");
-    // console.log(JSON.stringify(viewState.session.tracks));
+    // viewState.session.view.navToLocString(location)
 
     return (
       <Card title="Genome Browser">
@@ -234,6 +239,8 @@ function mapStateToProps(state) {
     annotations: state.entropy.annotations,
     geneMap: state.entropy.geneMap,
     bars: state.entropy.bars,
+    zoomMin: state.entropy.zoomMin,
+    zoomMax: state.entropy.zoomMax,
     geneLength: state.controls.geneLength,
     metadata: state.metadata,
   };
