@@ -65,16 +65,16 @@ class GenomeView extends React.Component {
 
     // add assembly from metadata
     const assembly = {
-      name: "Sars-Cov2",
+      name: "NC_045512.2",
       sequence: {
         type: "ReferenceSequenceTrack",
-        trackId: "Sars-Cov2-ReferenceSequenceTrack",
+        trackId: "NC_045512.2-ReferenceSequenceTrack",
         adapter: {
           type: "FromConfigSequenceAdapter",
           features: [
             {
-              refName: "Sars-Cov2",
-              uniqueId: "Sars-Cov2",
+              refName: "NC_045512.2",
+              uniqueId: "NC_045512.2",
               start: 0,
               end: this.props.metadata.rootSequence.nuc.length,
               seq: this.props.metadata.rootSequence.nuc,
@@ -87,7 +87,7 @@ class GenomeView extends React.Component {
     // add tracks from annotations
     const processedAnnotations = this.props.annotations.map((annotation) => {
       return {
-        refName: "Sars-Cov2",
+        refName: "NC_045512.2",
         name: annotation.prot,
         uniqueId: annotation.idx,
         start: annotation.start,
@@ -98,7 +98,7 @@ class GenomeView extends React.Component {
 
     const processedEntropy = this.props.bars.map((bar) => {
       return {
-        refName: "Sars-Cov2",
+        refName: "NC_045512.2",
         score: Number(bar.y),
         start: bar.x,
         end: bar.x + 1,
@@ -109,9 +109,9 @@ class GenomeView extends React.Component {
     const tracks = [
       {
         type: "FeatureTrack",
-        name: "Sars-Cov2 Annotations",
-        trackId: "sars-cov2-annotations",
-        assemblyNames: ["Sars-Cov2"],
+        name: "NC_045512.2 Annotations",
+        trackId: "NC_045512.2-annotations",
+        assemblyNames: ["NC_045512.2"],
         category: ["Annotation"],
         adapter: {
           type: "Gff3TabixAdapter",
@@ -129,7 +129,7 @@ class GenomeView extends React.Component {
         type: "FeatureTrack",
         name: "Nextstrain annotations",
         trackId: "nextstrain-annotations",
-        assemblyNames: ["Sars-Cov2"],
+        assemblyNames: ["NC_045512.2"],
         category: ["Annotation"],
         adapter: {
           type: "FromConfigAdapter",
@@ -150,7 +150,7 @@ class GenomeView extends React.Component {
         type: "QuantitativeTrack",
         name: "Entropy score",
         trackId: "entropy-score",
-        assemblyNames: ["Sars-Cov2"],
+        assemblyNames: ["NC_045512.2"],
         category: ["Annotation"],
         adapter: {
           type: "FromConfigAdapter",
@@ -195,21 +195,30 @@ class GenomeView extends React.Component {
           },
           {
             type: "ReferenceSequenceTrack",
-            configuration: "Sars-Cov2-ReferenceSequenceTrack",
+            configuration: "NC_045512.2-ReferenceSequenceTrack",
             displays: [
               {
                 type: "LinearReferenceSequenceDisplay",
-                configuration: "Sars-Cov2-ReferenceSequenceTrack-LinearReferenceSequenceDisplay",
+                configuration: "NC_045512.2-ReferenceSequenceTrack-LinearReferenceSequenceDisplay",
               },
             ],
           },
+          {
+            type: "FeatureTrack",
+            configuration: "NC_045512.2-annotations",
+            displays: [
+              {
+                type: "LinearBasicDisplay"
+              }
+            ]
+          }
         ],
       },
     };
 
     const location = this.props.zoomMin
-      ? `Sars-Cov2:${this.props.zoomMin}..${this.props.zoomMax}`
-      : "Sars-Cov2:1..29,903";
+      ? `NC_045512.2:${this.props.zoomMin}..${this.props.zoomMax}`
+      : "NC_045512.2:1..29,903";
 
     console.log({ location });
 
