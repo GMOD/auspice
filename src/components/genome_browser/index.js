@@ -65,16 +65,16 @@ class GenomeView extends React.Component {
 
     // add assembly from metadata
     const assembly = {
-      name: "Sars-Cov2",
+      name: "NC_045512.2",
       sequence: {
         type: "ReferenceSequenceTrack",
-        trackId: "Sars-Cov2-ReferenceSequenceTrack",
+        trackId: "NC_045512.2-ReferenceSequenceTrack",
         adapter: {
           type: "FromConfigSequenceAdapter",
           features: [
             {
-              refName: "Sars-Cov2",
-              uniqueId: "Sars-Cov2",
+              refName: "NC_045512.2",
+              uniqueId: "NC_045512.2",
               start: 0,
               end: this.props.metadata.rootSequence.nuc.length,
               seq: this.props.metadata.rootSequence.nuc,
@@ -87,7 +87,7 @@ class GenomeView extends React.Component {
     // add tracks from annotations
     const processedAnnotations = this.props.annotations.map((annotation) => {
       return {
-        refName: "Sars-Cov2",
+        refName: "NC_045512.2",
         name: annotation.prot,
         uniqueId: annotation.idx,
         start: annotation.start,
@@ -98,7 +98,7 @@ class GenomeView extends React.Component {
 
     const processedEntropy = this.props.bars.map((bar) => {
       return {
-        refName: "Sars-Cov2",
+        refName: "NC_045512.2",
         score: Number(bar.y),
         start: bar.x,
         end: bar.x + 1,
@@ -109,9 +109,9 @@ class GenomeView extends React.Component {
     const tracks = [
       {
         type: "FeatureTrack",
-        name: "Sars-Cov2 Annotations",
-        trackId: "sars-cov2-annotations",
-        assemblyNames: ["Sars-Cov2"],
+        name: "NC_045512.2 Annotations",
+        trackId: "NC_045512.2-annotations",
+        assemblyNames: ["NC_045512.2"],
         category: ["Annotation"],
         adapter: {
           type: "Gff3TabixAdapter",
@@ -129,7 +129,7 @@ class GenomeView extends React.Component {
         type: "FeatureTrack",
         name: "Nextstrain annotations",
         trackId: "nextstrain-annotations",
-        assemblyNames: ["Sars-Cov2"],
+        assemblyNames: ["NC_045512.2"],
         category: ["Annotation"],
         adapter: {
           type: "FromConfigAdapter",
@@ -150,11 +150,30 @@ class GenomeView extends React.Component {
         type: "QuantitativeTrack",
         name: "Entropy score",
         trackId: "entropy-score",
-        assemblyNames: ["Sars-Cov2"],
+        assemblyNames: ["NC_045512.2"],
         category: ["Annotation"],
         adapter: {
           type: "FromConfigAdapter",
           features: processedEntropy,
+        },
+      },
+      {
+        type: "FeatureTrack",
+        name: "Spike Mutations",
+        trackId: "spike-mutations",
+        assemblyNames: ["NC_045512.2"],
+        category: ["Annotation"],
+        adapter: {
+          type: "Gff3TabixAdapter",
+          gffGzLocation: {
+            uri: "https://jbrowse.org/genomes/sars-cov2/data/sars-cov2-spike-mutations.gff3.gz",
+          },
+          index: {
+            location: {
+              uri:
+                "https://jbrowse.org/genomes/sars-cov2/data/sars-cov2-spike-mutations.gff3.gz.tbi",
+            },
+          },
         },
       },
     ];
@@ -165,41 +184,34 @@ class GenomeView extends React.Component {
       view: {
         id: "linearGenomeView",
         type: "LinearGenomeView",
-        offsetPx: 0,
-        bpPerPx: 29,
+        // offsetPx: 0,
+        // bpPerPx: 29,
         tracks: [
           {
-            type: "QuantitativeTrack",
-            configuration: "entropy-score",
+            type: "FeatureTrack",
+            configuration: "spike-mutations",
             displays: [
               {
-                type: "LinearWiggleDisplay",
-                displayId: "entropy-score-LinearWiggleDisplay",
-                renderers: {
-                  DensityRenderer: { type: "DensityRenderer" },
-                  XYPlotRenderer: { type: "XYPlotRenderer" },
-                  LinePlotRenderer: { type: "LinePlotRenderer" },
-                },
+                type: "LinearBasicDisplay",
               },
             ],
           },
           {
             type: "FeatureTrack",
-            configuration: "nextstrain-annotations",
+            configuration: "NC_045512.2-annotations",
             displays: [
               {
                 type: "LinearBasicDisplay",
-                configuration: "nextstrain-color-display",
               },
             ],
           },
           {
             type: "ReferenceSequenceTrack",
-            configuration: "Sars-Cov2-ReferenceSequenceTrack",
+            configuration: "NC_045512.2-ReferenceSequenceTrack",
             displays: [
               {
                 type: "LinearReferenceSequenceDisplay",
-                configuration: "Sars-Cov2-ReferenceSequenceTrack-LinearReferenceSequenceDisplay",
+                configuration: "NC_045512.2-ReferenceSequenceTrack-LinearReferenceSequenceDisplay",
               },
             ],
           },
@@ -207,15 +219,20 @@ class GenomeView extends React.Component {
       },
     };
 
+    const location = this.props.zoomMin
+      ? `NC_045512.2:${this.props.zoomMin}..${this.props.zoomMax}`
+      : "NC_045512.2:1..29,903";
+
+    // console.log({ location });
+
     const viewState = createViewState({
       assembly,
       tracks,
-      location: "Sars-Cov2:1..29,903",
+      location,
       defaultSession,
     });
 
-    // console.log("Active tracks:");
-    // console.log(JSON.stringify(viewState.session.tracks));
+    // viewState.session.view.navToLocString(location)
 
     return (
       <Card title="Genome Browser">
@@ -234,6 +251,8 @@ function mapStateToProps(state) {
     annotations: state.entropy.annotations,
     geneMap: state.entropy.geneMap,
     bars: state.entropy.bars,
+    zoomMin: state.entropy.zoomMin,
+    zoomMax: state.entropy.zoomMax,
     geneLength: state.controls.geneLength,
     metadata: state.metadata,
   };
