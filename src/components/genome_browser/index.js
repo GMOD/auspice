@@ -157,6 +157,25 @@ class GenomeView extends React.Component {
           features: processedEntropy,
         },
       },
+      {
+        type: "FeatureTrack",
+        name: "Spike Mutations",
+        trackId: "spike-mutations",
+        assemblyNames: ["NC_045512.2"],
+        category: ["Annotation"],
+        adapter: {
+          type: "Gff3TabixAdapter",
+          gffGzLocation: {
+            uri: "https://jbrowse.org/genomes/sars-cov2/data/sars-cov2-spike-mutations.gff3.gz",
+          },
+          index: {
+            location: {
+              uri:
+                "https://jbrowse.org/genomes/sars-cov2/data/sars-cov2-spike-mutations.gff3.gz.tbi",
+            },
+          },
+        },
+      },
     ];
 
     // move default session here and set it up
@@ -169,27 +188,20 @@ class GenomeView extends React.Component {
         // bpPerPx: 29,
         tracks: [
           {
-            type: "QuantitativeTrack",
-            configuration: "entropy-score",
+            type: "FeatureTrack",
+            configuration: "spike-mutations",
             displays: [
               {
-                type: "LinearWiggleDisplay",
-                displayId: "entropy-score-LinearWiggleDisplay",
-                renderers: {
-                  DensityRenderer: { type: "DensityRenderer" },
-                  XYPlotRenderer: { type: "XYPlotRenderer" },
-                  LinePlotRenderer: { type: "LinePlotRenderer" },
-                },
+                type: "LinearBasicDisplay",
               },
             ],
           },
           {
             type: "FeatureTrack",
-            configuration: "nextstrain-annotations",
+            configuration: "NC_045512.2-annotations",
             displays: [
               {
                 type: "LinearBasicDisplay",
-                configuration: "nextstrain-color-display",
               },
             ],
           },
@@ -203,15 +215,6 @@ class GenomeView extends React.Component {
               },
             ],
           },
-          {
-            type: "FeatureTrack",
-            configuration: "NC_045512.2-annotations",
-            displays: [
-              {
-                type: "LinearBasicDisplay"
-              }
-            ]
-          }
         ],
       },
     };
@@ -220,7 +223,7 @@ class GenomeView extends React.Component {
       ? `NC_045512.2:${this.props.zoomMin}..${this.props.zoomMax}`
       : "NC_045512.2:1..29,903";
 
-    console.log({ location });
+    // console.log({ location });
 
     const viewState = createViewState({
       assembly,
