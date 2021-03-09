@@ -1,69 +1,32 @@
 import React from "react";
 import { connect } from "react-redux";
-import Card from "../framework/card";
 import {
   createViewState,
   createJBrowseTheme,
   JBrowseLinearGenomeView,
-  ThemeProvider,
+  ThemeProvider
 } from "@jbrowse/react-linear-genome-view";
-import { width } from "../../util/globals";
+
+import Card from "../framework/card";
 
 const theme = createJBrowseTheme({
   palette: {
     primary: {
-      main: "#5da8a3",
+      main: "#5da8a3"
     },
     secondary: {
-      main: "#333",
-    },
-  },
+      main: "#333"
+    }
+  }
 });
-
-// Data Views
-
-/* 
-Load the assembly from metadata ✅
-*/
-
-/* 
-Load the gene track from JSON ✅
-
-We want to load the gene array into a FeatureTrack (can FeatureTrack display be configured?)
-*/
-
-/* 
-Wiggle track of entropy ✅
-
-1. We want the same entropy data as entropy panel (probably inline from entropy)
-2. Process the entropy array
-3. Put it into wiggle track (Need to make the wiggle track run callback on click (?))
-*/
-
-// Future JB2 Work
-
-/* 
-1. Floating track labels (mentioned in issue)
-2. Ability to upload tracks into embedded LGV (opened issue)
-3. Theming
-4. Weird width (CSS?) interactions
-*/
-
-// Question is whether we want to replace diversity panel or just add browser
-
-// ---------------------------------------------------------------------
 
 class GenomeView extends React.Component {
   render() {
-    // console.log("Props including connected state:");
-    // console.log(this.props);
-
-    // avoid error with rootSequence (should add spinner for loading maybe)
-    if (this.props.metadata.rootSequence == undefined) {
+    // avoid error with rootSequence
+    if (this.props.metadata.rootSequence === undefined) {
       return <></>;
     }
 
-    // add assembly from metadata
     const assembly = {
       name: "NC_045512.2",
       sequence: {
@@ -77,14 +40,13 @@ class GenomeView extends React.Component {
               uniqueId: "NC_045512.2",
               start: 0,
               end: this.props.metadata.rootSequence.nuc.length,
-              seq: this.props.metadata.rootSequence.nuc,
-            },
-          ],
-        },
-      },
+              seq: this.props.metadata.rootSequence.nuc
+            }
+          ]
+        }
+      }
     };
 
-    // add tracks from annotations
     const processedAnnotations = this.props.annotations.map((annotation) => {
       return {
         refName: "NC_045512.2",
@@ -92,7 +54,7 @@ class GenomeView extends React.Component {
         uniqueId: annotation.idx,
         start: annotation.start,
         end: annotation.end,
-        fill: annotation.fill,
+        fill: annotation.fill
       };
     });
 
@@ -102,7 +64,7 @@ class GenomeView extends React.Component {
         score: Number(bar.y),
         start: bar.x,
         end: bar.x + 1,
-        uniqueId: String(bar.x),
+        uniqueId: String(bar.x)
       };
     });
 
@@ -116,14 +78,14 @@ class GenomeView extends React.Component {
         adapter: {
           type: "Gff3TabixAdapter",
           gffGzLocation: {
-            uri: "https://jbrowse.org/genomes/sars-cov2/sars-cov2-annotations.sorted.gff.gz",
+            uri: "https://jbrowse.org/genomes/sars-cov2/sars-cov2-annotations.sorted.gff.gz"
           },
           index: {
             location: {
-              uri: "https://jbrowse.org/genomes/sars-cov2/sars-cov2-annotations.sorted.gff.gz.tbi",
-            },
-          },
-        },
+              uri: "https://jbrowse.org/genomes/sars-cov2/sars-cov2-annotations.sorted.gff.gz.tbi"
+            }
+          }
+        }
       },
       {
         type: "FeatureTrack",
@@ -133,7 +95,7 @@ class GenomeView extends React.Component {
         category: ["Annotation"],
         adapter: {
           type: "FromConfigAdapter",
-          features: processedAnnotations,
+          features: processedAnnotations
         },
         displays: [
           {
@@ -141,10 +103,10 @@ class GenomeView extends React.Component {
             displayId: "nextstrain-color-display",
             renderer: {
               type: "SvgFeatureRenderer",
-              color1: "function(feature) { return feature.get('fill') || 'black' }",
-            },
-          },
-        ],
+              color1: "function(feature) { return feature.get('fill') || 'black' }"
+            }
+          }
+        ]
       },
       {
         type: "QuantitativeTrack",
@@ -154,8 +116,8 @@ class GenomeView extends React.Component {
         category: ["Annotation"],
         adapter: {
           type: "FromConfigAdapter",
-          features: processedEntropy,
-        },
+          features: processedEntropy
+        }
       },
       {
         type: "FeatureTrack",
@@ -166,44 +128,41 @@ class GenomeView extends React.Component {
         adapter: {
           type: "Gff3TabixAdapter",
           gffGzLocation: {
-            uri: "https://jbrowse.org/genomes/sars-cov2/data/sars-cov2-spike-mutations.gff3.gz",
+            uri: "https://jbrowse.org/genomes/sars-cov2/data/sars-cov2-spike-mutations.gff3.gz"
           },
           index: {
             location: {
               uri:
-                "https://jbrowse.org/genomes/sars-cov2/data/sars-cov2-spike-mutations.gff3.gz.tbi",
-            },
-          },
-        },
-      },
+                "https://jbrowse.org/genomes/sars-cov2/data/sars-cov2-spike-mutations.gff3.gz.tbi"
+            }
+          }
+        }
+      }
     ];
 
-    // move default session here and set it up
     const defaultSession = {
       name: "My session",
       view: {
         id: "linearGenomeView",
         type: "LinearGenomeView",
-        // offsetPx: 0,
-        // bpPerPx: 29,
         tracks: [
           {
             type: "FeatureTrack",
             configuration: "spike-mutations",
             displays: [
               {
-                type: "LinearBasicDisplay",
-              },
-            ],
+                type: "LinearBasicDisplay"
+              }
+            ]
           },
           {
             type: "FeatureTrack",
             configuration: "NC_045512.2-annotations",
             displays: [
               {
-                type: "LinearBasicDisplay",
-              },
-            ],
+                type: "LinearBasicDisplay"
+              }
+            ]
           },
           {
             type: "ReferenceSequenceTrack",
@@ -211,28 +170,24 @@ class GenomeView extends React.Component {
             displays: [
               {
                 type: "LinearReferenceSequenceDisplay",
-                configuration: "NC_045512.2-ReferenceSequenceTrack-LinearReferenceSequenceDisplay",
-              },
-            ],
-          },
-        ],
-      },
+                configuration: "NC_045512.2-ReferenceSequenceTrack-LinearReferenceSequenceDisplay"
+              }
+            ]
+          }
+        ]
+      }
     };
 
     const location = this.props.zoomMin
       ? `NC_045512.2:${this.props.zoomMin}..${this.props.zoomMax}`
       : "NC_045512.2:1..29,903";
 
-    // console.log({ location });
-
     const viewState = createViewState({
       assembly,
       tracks,
       location,
-      defaultSession,
+      defaultSession
     });
-
-    // viewState.session.view.navToLocString(location)
 
     return (
       <Card title="Genome Browser">
@@ -254,7 +209,7 @@ function mapStateToProps(state) {
     zoomMin: state.entropy.zoomMin,
     zoomMax: state.entropy.zoomMax,
     geneLength: state.controls.geneLength,
-    metadata: state.metadata,
+    metadata: state.metadata
   };
 }
 export default connect(mapStateToProps)(GenomeView);
